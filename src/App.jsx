@@ -1,7 +1,8 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Stage, Html } from '@react-three/drei';
 import './App.css';
+
 
 function MonasModel() {
   const { scene } = useGLTF('/monas_lowpoly.glb'); 
@@ -9,15 +10,55 @@ function MonasModel() {
 }
 
 export default function App() {
+
+  const [activeSection, setActiveSection] = useState('beranda');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['beranda', 'sejarah', 'filosofi'];
+      let currentSection = 'beranda';
+
+      sections.forEach((id) => {
+        const section = document.getElementById(id);
+        if (section) {
+          const sectionTop = section.offsetTop;
+          if (window.scrollY >= sectionTop - 150) {
+            currentSection = id;
+          }
+        }
+      });
+
+      setActiveSection(currentSection);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <div className="app-container">
       <header className="app-header">
-        <div className="logo">MONAS 3D </div>
+        <div className="logo">MONAS EXPLORER</div>
         <nav>
           <ul>
-            <li><a href="#beranda" className="active">Beranda</a></li>
-            <li><a href="#sejarah">Sejarah</a></li>
-            <li><a href="#filosofi">Filosofi</a></li>
+            <li>
+              <a href="#beranda" className={activeSection === 'beranda' ? 'active' : ''}>
+                Beranda
+              </a>
+            </li>
+            <li>
+              <a href="#sejarah" className={activeSection === 'sejarah' ? 'active' : ''}>
+                Sejarah
+              </a>
+            </li>
+            <li>
+              <a href="#filosofi" className={activeSection === 'filosofi' ? 'active' : ''}>
+                Filosofi
+              </a>
+            </li>
           </ul>
         </nav>
       </header>
@@ -72,6 +113,7 @@ export default function App() {
             </div>
           </div>
         </section>
+
         <section id="sejarah" className="content-section">
           <div className="section-header">
             <h2>Sejarah Pembangunan</h2>
@@ -110,9 +152,9 @@ export default function App() {
 
       <footer className="app-footer">
         <div className="footer-content">
-          <h3>Monas 3D</h3>
-          <p>Project UAS Sistem Multimedia</p>
-          <p>202531160 Ilham Purnama Hadi</p>
+        <h3>Monas 3D</h3>
+        <p>Project UAS Sistem Multimedia</p>
+        <p>202531160 Ilham Purnama Hadi</p>
         </div>
       </footer>
     </div>
